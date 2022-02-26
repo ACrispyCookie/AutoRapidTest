@@ -49,13 +49,15 @@ function send(profile) {
     //NAVIGATE TO SELF TEST POST PAGE
     await page.waitForNetworkIdle();
     //SET SCHOOL DATA
-    await page.click("div[role=button]");
+    await page.click("div[customlabel=\"Περιφέρεια\"")
     //SET STUDENT DATA
     for (let i = 0; i < 6; i++) {
       let name = Object.keys(profile)[i + 2]
       let value = profile[name];
       await page.type("input[name=input_" + name + "]", value);
     }
+    /*await page.click("div[aria-labelledby=mui-component-select-can_use_amka]")
+    await page.click("li[data-value=ΝΑΙ]")*/
     //SET DATE
     let d = new Date();
     let date = String(d.getDate());
@@ -65,9 +67,8 @@ function send(profile) {
     await page.type("input[name=self_test_date-month]", month)
     await page.type("input[name=self_test_date-year]", year)
     //SET RESULT
-    await page.evaluate(() => {
-      document.getElementsByName("self_test_result").value = "ΑΡΝΗΤΙΚΟ";
-    });
+    /*await page.click("div[aria-labelledby=mui-component-select-self_test_result]")
+    await page.click("li[data-value=ΑΡΝΗΤΙΚΟ]")*/
     //SUBMIT
     //await page.click(loginButton5);
   })();
