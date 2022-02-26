@@ -31,52 +31,44 @@ function send(profile) {
     await page.click(cookieButton);
     await page.click(loginButton);
     await page.waitForNavigation();
-    //ACCOUNT TYPE GOV.GR
+    //NAVIGATE ACCOUNT TYPE GOV.GR
     await page.click(loginButton2);
-    //GSIS.GR
+    //NAVIGATE GSIS.GR
     await page.waitForSelector(loginButton3);
     await page.waitForTimeout(500);
     await page.type(usernameInput, profile.username);
     await page.type(passwordInput, profile.password);
     await page.click(loginButton3);
-    //GSIS.GR ALLOW DATA
+    //NAVIGATE GSIS.GR ALLOW DATA
     await page.waitForTimeout(3000);
     if (page.url().startsWith("https://www1.gsis.gr/"))
       await page.click(loginButton4);
-    //BACK TO GOV.GR
+    //NAVIGATE BACK TO GOV.GR
     await page.waitForSelector(loginButton5);
     await page.click(loginButton5);
-    //SELF TEST POST PAGE
+    //NAVIGATE TO SELF TEST POST PAGE
     await page.waitForNetworkIdle();
     //SET SCHOOL DATA
-    for (let i = 0; i < 13; i++) {
-      let value = profile[Object.keys(profile)[i + 2]];
-      await page.evaluate(
-        (i, value) => {
-          document.getElementsByTagName("input")[i].value = value;
-        },
-        i,
-        value
-      );
+    await page.click("div[role=button]");
+    //SET STUDENT DATA
+    for (let i = 0; i < 6; i++) {
+      let name = Object.keys(profile)[i + 2]
+      let value = profile[name];
+      await page.type("input[name=input_" + name + "]", value);
     }
     //SET DATE
     let d = new Date();
-    let date = d.getDate();
-    let month = d.getMonth();
-    let year = d.getFullYear();
-    await page.evaluate((value) => {
-      document.getElementsByName("self_test_date-day").value = value;
-    }, date);
-    await page.evaluate((value) => {
-      document.getElementsByName("self_test_date-month").value = value;
-    }, month);
-    await page.evaluate((value) => {
-      document.getElementsByName("self_test_date-year").value = value;
-    }, year);
+    let date = String(d.getDate());
+    let month = String(d.getMonth());
+    let year = String(d.getFullYear());
+    await page.type("input[name=self_test_date-day]", date)
+    await page.type("input[name=self_test_date-month]", month)
+    await page.type("input[name=self_test_date-year]", year)
     //SET RESULT
     await page.evaluate(() => {
       document.getElementsByName("self_test_result").value = "ΑΡΝΗΤΙΚΟ";
     });
+    //SUBMIT
     //await page.click(loginButton5);
   })();
 }
