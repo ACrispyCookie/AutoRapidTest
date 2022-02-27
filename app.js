@@ -126,7 +126,7 @@ async function selectDropDown(page, button, value){
   await page.click(button);
   await page.waitForSelector('li[data-value="' + value + '"]');
   await page.click('li[data-value="' + value + '"]');
-  await page.waitForTimeout(500)
+  await page.waitForTimeout(700)
 }
 
 if(process.argv[3]){
