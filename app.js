@@ -7,8 +7,7 @@ let file = fs.readFileSync(process.argv[2] + ".json");
 let profile = JSON.parse(file);
 
 let url = "https://dilosi.services.gov.gr/templates/EDUPASS-SCHOOL-CARD";
-let headless = true;
-let delayForButtons = 500;
+let headless = false;
 let result = "ΑΡΝΗΤΙΚΟ";
 let resultArg = process.argv[4];
 if (resultArg == "n" || resultArg == "p") {
@@ -16,16 +15,13 @@ if (resultArg == "n" || resultArg == "p") {
 }
 
 //BUTTONS
-let cookieButton =
-  "button.MuiButtonBase-root.MuiButton-root.jss261.MuiButton-contained.jss247.MuiButton-containedPrimary.MuiButton-containedSizeSmall.MuiButton-sizeSmall";
-let loginButton =
-  "a.MuiButtonBase-root.MuiButton-root.jss261.MuiButton-contained.MuiButton-containedPrimary.MuiButton-containedSizeLarge.MuiButton-sizeLarge";
+let cookieButton = "button.MuiButtonBase-root.MuiButton-root.jss261.MuiButton-contained.jss247.MuiButton-containedPrimary.MuiButton-containedSizeSmall.MuiButton-sizeSmall";
+let loginButton = 'a[label="Σύνδεση"]';
 let loginButton2 =
   "button.MuiButtonBase-root.MuiButton-root.MuiButton-root.MuiButton-contained.jss5.MuiButton-containedPrimary.MuiButton-containedPrimary.MuiButton-containedSizeLarge.MuiButton-sizeLarge";
 let loginButton3 = "button#btn-login-submit";
 let loginButton4 = "button#btn-submit";
-let loginButton5 =
-  "button.MuiButtonBase-root.MuiButton-root.jss370.MuiButton-contained.jss439.MuiButton-containedPrimary.MuiButton-containedSizeLarge.MuiButton-sizeLarge";
+let loginButton5 = 'button[label="Συνέχεια"]';
 
 //INPUTS
 let usernameInput = "input#v";
@@ -47,7 +43,7 @@ function send(profile) {
     console.log("Navigating to login page...");
     //NAVIGATE GSIS.GR
     await page.waitForSelector(loginButton3);
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(300);
     console.log("Logging in...");
     await page.type(usernameInput, profile.username);
     await page.type(passwordInput, profile.password);
@@ -124,9 +120,9 @@ function send(profile) {
 
 async function selectDropDown(page, button, value){
   await page.click(button);
-  await page.waitForTimeout(delayForButtons);
+  await page.waitForSelector('li[data-value="' + value + '"]');
   await page.click('li[data-value="' + value + '"]');
-  await page.waitForTimeout(delayForButtons);
+  await page.waitForTimeout(300)
 }
 
 if(process.argv[3]){
