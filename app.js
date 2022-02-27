@@ -106,6 +106,9 @@ function send(profile) {
     await page.waitForSelector("button[label=Εκτύπωση]");
     if (headless) {
       console.log("Saving pdf...");
+      if (!fs.existsSync("./tests")) {
+        fs.mkdirSync("./tests");
+      }
       await page.pdf({
         path:
           "./tests/self-test_" +
