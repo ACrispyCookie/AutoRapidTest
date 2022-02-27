@@ -21,7 +21,8 @@ let loginButton2 =
   "button.MuiButtonBase-root.MuiButton-root.MuiButton-root.MuiButton-contained.jss5.MuiButton-containedPrimary.MuiButton-containedPrimary.MuiButton-containedSizeLarge.MuiButton-sizeLarge";
 let loginButton3 = "button#btn-login-submit";
 let loginButton4 = "button#btn-submit";
-let loginButton5 = 'button[label="Συνέχεια"]';
+let loginButton5 =
+  "button.MuiButtonBase-root.MuiButton-root.jss370.MuiButton-contained.jss439.MuiButton-containedPrimary.MuiButton-containedSizeLarge.MuiButton-sizeLarge";
 
 //INPUTS
 let usernameInput = "input#v";
