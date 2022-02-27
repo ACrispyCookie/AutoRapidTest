@@ -105,7 +105,8 @@ function send(profile) {
       }
       await page.pdf({
         path:
-          "./tests/self-test_" +
+          "./tests/" + 
+          process.argv[2] + "_" + 
           date +
           month +
           year +
