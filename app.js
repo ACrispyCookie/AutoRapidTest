@@ -1,14 +1,16 @@
 const fs = require("fs");
+const cron = require('node-cron');
+const { argv } = require("process");
 const puppeteer = require("puppeteer");
 
 let file = fs.readFileSync(process.argv[2] + ".json");
-let jason = JSON.parse(file);
+let profile = JSON.parse(file);
 
 let url = "https://dilosi.services.gov.gr/templates/EDUPASS-SCHOOL-CARD";
 let headless = true;
 let delayForButtons = 500;
 let result = "ΑΡΝΗΤΙΚΟ";
-let resultArg = process.argv[3];
+let resultArg = process.argv[4];
 if (resultArg == "n" || resultArg == "p") {
   result = resultArg == "n" ? "ΑΡΝΗΤΙΚΟ" : "ΘΕΤΙΚΟ";
 }
@@ -127,4 +129,17 @@ function send(profile) {
   })();
 }
 
-send(jason);
+if(process.argv[3]){
+  if(process.argv[3] == "-s"){
+    console.log("Waiting for Monday or Thursday...");
+    cron.schedule("0 0 22 * * 1,4", () => {
+      send(profile);
+      console.log("Waiting for Monday or Thursday...");
+    })
+  }
+  else {
+    send(profile);
+  }
+} else {
+  send(profile);
+}
