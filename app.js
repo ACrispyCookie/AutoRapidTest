@@ -39,7 +39,7 @@ function send(profile) {
     await page.click(cookieButton);
     await page.click(loginButton);
     console.log("Navigating to account type selection...");
-    await page.waitForNavigation();
+    await page.waitForSelector(loginButton2);
     //NAVIGATE ACCOUNT TYPE GOV.GR
     await page.click(loginButton2);
     console.log("Navigating to login page...");
