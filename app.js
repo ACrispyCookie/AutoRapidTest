@@ -46,7 +46,7 @@ function send(profile) {
     console.log("Navigating to login page...");
     //NAVIGATE GSIS.GR
     await page.waitForSelector(loginButton3);
-    await page.waitForTimeout(300);
+    await page.waitForTimeout(500);
     console.log("Logging in...");
     await page.type(usernameInput, profile.username);
     await page.type(passwordInput, profile.password);
@@ -126,7 +126,7 @@ async function selectDropDown(page, button, value){
   await page.click(button);
   await page.waitForSelector('li[data-value="' + value + '"]');
   await page.click('li[data-value="' + value + '"]');
-  await page.waitForTimeout(300)
+  await page.waitForTimeout(500)
 }
 
 if(process.argv[3]){
