@@ -7,7 +7,7 @@ let file = fs.readFileSync(process.argv[2] + ".json");
 let profile = JSON.parse(file);
 
 let url = "https://dilosi.services.gov.gr/templates/EDUPASS-SCHOOL-CARD";
-let headless = true;
+let headless = false;
 let delayForButtons = 500;
 let result = "ΑΡΝΗΤΙΚΟ";
 let resultArg = process.argv[4];
@@ -41,8 +41,8 @@ function send(profile) {
     await page.click(cookieButton);
     await page.click(loginButton);
     console.log("Navigating to account type selection...");
-    await page.waitForSelector(loginButton2);
     //NAVIGATE ACCOUNT TYPE GOV.GR
+    await page.waitForNetworkIdle();
     await page.click(loginButton2);
     console.log("Navigating to login page...");
     //NAVIGATE GSIS.GR
@@ -54,12 +54,15 @@ function send(profile) {
     await page.click(loginButton3);
     console.log("Navigating...");
     //NAVIGATE GSIS.GR ALLOW DATA
-    await page.waitForTimeout(3000);
-    if (page.url().startsWith("https://www1.gsis.gr/"))
+    const navigated2 = await page.waitForFrame(async (frame) => {
+      return frame;
+    })
+    if(navigated2.url().startsWith("https://www1.gsis.gr/")) {
       await page.click(loginButton4);
+    }
     console.log("Navigating to gov.gr...");
     //NAVIGATE BACK TO GOV.GR
-    await page.waitForSelector(loginButton5);
+    await page.waitForNetworkIdle();
     await page.click(loginButton5);
     console.log("Navigating to the posting page...");
     //NAVIGATE TO SELF TEST POST PAGE
@@ -69,10 +72,7 @@ function send(profile) {
     for (let i = 0; i < 6; i++) {
       let keys = Object.keys(profile["buttons"]);
       let value = profile["buttons"][keys[i]];
-      await page.click('div[customlabel="' + keys[i] + '"');
-      await page.waitForTimeout(delayForButtons);
-      await page.click('li[data-value="' + value + '"]');
-      await page.waitForTimeout(delayForButtons);
+      await selectDropDown(page, 'div[customlabel="' + keys[i] + '"]', value)
     }
     //SET STUDENT DATA
     console.log("Filling student data...");
@@ -81,10 +81,7 @@ function send(profile) {
       let value = profile[name];
       await page.type("input[name=input_" + name + "]", value);
     }
-    await page.click("div[aria-labelledby=mui-component-select-can_use_amka]");
-    await page.waitForTimeout(delayForButtons);
-    await page.click("li[data-value=ΝΑΙ]");
-    await page.waitForTimeout(delayForButtons);
+    await selectDropDown(page, "div[aria-labelledby=mui-component-select-can_use_amka]", "ΝΑΙ")
     //SET DATE
     console.log("Filling date data...");
     let d = new Date();
@@ -96,16 +93,12 @@ function send(profile) {
     await page.type("input[name=self_test_date-year]", year);
     //SET RESULT
     console.log("Filling result data...");
-    await page.click(
-      "div[aria-labelledby=mui-component-select-self_test_result]"
-    );
-    await page.waitForTimeout(delayForButtons);
-    await page.click("li[data-value=" + result + "]");
-    await page.waitForTimeout(delayForButtons);
+    await selectDropDown(page, "div[aria-labelledby=mui-component-select-self_test_result]", result);
     //SUBMIT
     console.log("Sumbiting data...");
     await page.click(loginButton5);
-    await page.waitForSelector("button[label=Εκτύπωση]");
+    //FINAL PAGE
+    await page.waitForNetworkIdle();
     if (headless) {
       console.log("Saving pdf...");
       if (!fs.existsSync("./tests")) {
@@ -127,6 +120,13 @@ function send(profile) {
     }
     await browser.close();
   })();
+}
+
+async function selectDropDown(page, button, value){
+  await page.click(button);
+  await page.waitForTimeout(delayForButtons);
+  await page.click('li[data-value="' + value + '"]');
+  await page.waitForTimeout(delayForButtons);
 }
 
 if(process.argv[3]){
