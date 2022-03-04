@@ -7,7 +7,7 @@ let file = fs.readFileSync(process.argv[2] + ".json");
 let profile = JSON.parse(file);
 
 let url = "https://dilosi.services.gov.gr/templates/EDUPASS-SCHOOL-CARD";
-let headless = false;
+let headless = true;
 let delayBetweenActions = 400;
 let result = "ΑΡΝΗΤΙΚΟ";
 let resultArg = process.argv[4];
