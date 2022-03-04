@@ -7,7 +7,7 @@ let file = fs.readFileSync(process.argv[2] + ".json");
 let profile = JSON.parse(file);
 
 let url = "https://dilosi.services.gov.gr/templates/EDUPASS-SCHOOL-CARD";
-let headless = true;
+let headless = false;
 let delayBetweenActions = 400;
 let result = "ΑΡΝΗΤΙΚΟ";
 let resultArg = process.argv[4];
@@ -42,7 +42,7 @@ function send(profile) {
     await page.click(loginButton);
     console.log("Navigating to account type selection...");
     //NAVIGATE ACCOUNT TYPE GOV.GR
-    await page.waitForNetworkIdle();
+    await page.waitForSelector(loginButton2);
     await page.waitForTimeout(delayBetweenActions);
     await page.click(loginButton2);
     console.log("Navigating to login page...");
@@ -61,7 +61,7 @@ function send(profile) {
     } catch (e) {}
     console.log("Navigating to gov.gr...");
     //NAVIGATE BACK TO GOV.GR
-    await page.waitForNetworkIdle();
+    await page.waitForSelector(loginButton5);
     await page.waitForTimeout(delayBetweenActions);
     await page.click(loginButton5);
     console.log("Navigating to the posting page...");
