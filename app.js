@@ -217,7 +217,7 @@ async function doDebug(count) {
     let date = String(d.getDate());
     let month = String(d.getMonth() + 1);
     let year = String(d.getFullYear());
-    fs.writeFileSync(
+    await fs.writeFileSync(
       "./logs/log" +
         "_" +
         date +
