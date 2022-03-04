@@ -85,7 +85,7 @@ function send(profile) {
     console.log("Filling date data...");
     let d = new Date();
     let date = String(d.getDate());
-    let month = String(d.getMonth());
+    let month = String(d.getMonth() + 1);
     let year = String(d.getFullYear());
     await page.type("input[name=self_test_date-day]", date);
     await page.type("input[name=self_test_date-month]", month);
