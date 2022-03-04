@@ -169,19 +169,37 @@ async function doDebug(count) {
   let fail = 0;
   let success = 0;
   let exceptions = new Array();
+  let time = new Array();
   for (let i = 0; i < count; i++) {
+    let timeBefore = Date.now();
+    let timeAfter = 0;
     console.log("Test #" + (i + 1) + " started.");
     try {
       await send(profile, false);
+      timeAfter = Date.now();
       success++;
-      console.log("Test #" + (i + 1) + " succeded!");
+      console.log(
+        "Test #" +
+          (i + 1) +
+          " succeded! Time taken: " +
+          (timeAfter - timeBefore) / 1000 +
+          "s"
+      );
     } catch (e) {
+      timeAfter = Date.now();
       fail++;
       exceptions.push(e);
       console.log("Test #" + (i + 1) + " failed!");
     }
+    time.push(timeAfter - timeBefore);
   }
-  console.log("Tests done: " + count);
+  console.log(
+    "Tests done: " +
+      count +
+      " (Avg. time: " +
+      (time.reduce((a, b) => a + b, 0) / 1000) * time.length +
+      "s)"
+  );
   console.log("Tests failed: " + fail);
   console.log("Tests succeded: " + success);
   if (exceptions.length > 0) {
