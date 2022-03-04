@@ -197,7 +197,7 @@ async function doDebug(count) {
     "Tests done: " +
       count +
       " (Avg. time: " +
-      (time.reduce((a, b) => a + b, 0) / 1000) * time.length +
+      time.reduce((a, b) => a + b, 0) / 1000 / time.length +
       "s)"
   );
   console.log("Tests failed: " + fail);
