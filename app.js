@@ -2,6 +2,7 @@ const fs = require("fs");
 const cron = require("node-cron");
 const { argv } = require("process");
 const puppeteer = require("puppeteer");
+const { isNumberObject } = require("util/types");
 
 let file = fs.readFileSync(process.argv[2] + ".json");
 let profile = JSON.parse(file);
@@ -104,7 +105,7 @@ function send(profile) {
       result
     );
     //SUBMIT
-    console.log("Sumbiting data...");
+    console.log("Sumbitting data...");
     await page.click(loginButton5);
     //FINAL PAGE
     await page.waitForNetworkIdle();
@@ -149,6 +150,11 @@ if (process.argv[3]) {
       send(profile);
       console.log("Waiting for Monday or Thursday...");
     });
+  } else if (Number.isInteger(process.argv[3]) && Number(process.argv[3]) > 0) {
+    let count = Number(process.argv[3]);
+    for (let i = 0; i < count; i++) {
+      send(profile);
+    }
   } else {
     send(profile);
   }
