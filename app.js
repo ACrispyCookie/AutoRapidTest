@@ -32,52 +32,52 @@ let loginButton5 =
 let usernameInput = "input#v";
 let passwordInput = "input#j_password";
 
-function send(profile) {
-  (async () => {
+async function send(profile, log) {
+  await (async () => {
     const browser = await puppeteer.launch({ headless: headless });
     const page = await browser.newPage();
     //GOV.GR
-    console.log("Launching gov.gr...");
+    if (log) console.log("Launching gov.gr...");
     await page.goto(url, { waitUntil: "networkidle0", timeout: 0 });
     await page.click(cookieButton);
     await page.click(loginButton);
-    console.log("Navigating to account type selection...");
+    if (log) console.log("Navigating to account type selection...");
     //NAVIGATE ACCOUNT TYPE GOV.GR
     await page.waitForSelector(loginButton2);
     await page.waitForTimeout(delayBetweenActions);
     await page.click(loginButton2);
-    console.log("Navigating to login page...");
+    if (log) console.log("Navigating to login page...");
     //NAVIGATE GSIS.GR
     await page.waitForSelector(loginButton3);
     await page.waitForTimeout(delayBetweenActions);
-    console.log("Logging in...");
+    if (log) console.log("Logging in...");
     await page.type(usernameInput, profile.username);
     await page.type(passwordInput, profile.password);
     await page.click(loginButton3);
-    console.log("Navigating...");
+    if (log) console.log("Navigating...");
     //NAVIGATE GSIS.GR ALLOW DATA
     try {
       await page.waitForSelector(loginButton4, { timeout: 3000 });
       await page.click(loginButton4);
     } catch (e) {}
-    console.log("Navigating to gov.gr...");
+    if (log) console.log("Navigating to gov.gr...");
     //NAVIGATE BACK TO GOV.GR
     await page.waitForSelector(loginButton5);
     await page.waitForTimeout(delayBetweenActions);
     await page.click(loginButton5);
-    console.log("Navigating to the posting page...");
+    if (log) console.log("Navigating to the posting page...");
     //NAVIGATE TO SELF TEST POST PAGE
     await page.waitForNetworkIdle();
     await page.waitForTimeout(delayBetweenActions);
     //SET SCHOOL DATA
-    console.log("Filling school data...");
+    if (log) console.log("Filling school data...");
     for (let i = 0; i < 6; i++) {
       let keys = Object.keys(profile["buttons"]);
       let value = profile["buttons"][keys[i]];
       await selectDropDown(page, 'div[customlabel="' + keys[i] + '"]', value);
     }
     //SET STUDENT DATA
-    console.log("Filling student data...");
+    if (log) console.log("Filling student data...");
     for (let i = 0; i < 6; i++) {
       let name = Object.keys(profile)[i + 2];
       let value = profile[name];
@@ -89,7 +89,7 @@ function send(profile) {
       "ΝΑΙ"
     );
     //SET DATE
-    console.log("Filling date data...");
+    if (log) console.log("Filling date data...");
     let d = new Date();
     let date = String(d.getDate());
     let month = String(d.getMonth() + 1);
@@ -98,20 +98,20 @@ function send(profile) {
     await page.type("input[name=self_test_date-month]", month);
     await page.type("input[name=self_test_date-year]", year);
     //SET RESULT
-    console.log("Filling result data...");
+    if (log) console.log("Filling result data...");
     await selectDropDown(
       page,
       "div[aria-labelledby=mui-component-select-self_test_result]",
       result
     );
     //SUBMIT
-    console.log("Sumbitting data...");
+    if (log) console.log("Sumbitting data...");
     await page.click(loginButton5);
     //FINAL PAGE
     await page.waitForNetworkIdle();
     await page.waitForTimeout(delayBetweenActions);
     if (headless) {
-      console.log("Saving pdf...");
+      if (log) console.log("Saving pdf...");
       if (!fs.existsSync("./tests")) {
         fs.mkdirSync("./tests");
       }
@@ -129,7 +129,7 @@ function send(profile) {
           d.getSeconds() +
           ".pdf",
       });
-      console.log("Process complete!");
+      if (log) console.log("Process complete!");
     }
     await browser.close();
   })();
@@ -144,20 +144,69 @@ async function selectDropDown(page, button, value) {
 }
 
 if (process.argv[3]) {
-  if (process.argv[3] == "-s") {
+  let dashless = process.argv[3].substring(1);
+  if (dashless == "s") {
     console.log("Waiting for Monday or Thursday...");
     cron.schedule("0 0 22 * * 1,4", () => {
-      send(profile);
+      send(profile, true);
       console.log("Waiting for Monday or Thursday...");
     });
-  } else if (Number.isInteger(process.argv[3]) && Number(process.argv[3]) > 0) {
-    let count = Number(process.argv[3]);
-    for (let i = 0; i < count; i++) {
-      send(profile);
-    }
+  } else if (
+    !isNaN(dashless) &&
+    Number.isInteger(Number(dashless)) &&
+    Number(dashless) > 1
+  ) {
+    let count = Number(dashless);
+    doDebug(count);
   } else {
-    send(profile);
+    send(profile, true);
   }
 } else {
-  send(profile);
+  send(profile, true);
+}
+
+async function doDebug(count) {
+  let fail = 0;
+  let success = 0;
+  let exceptions = new Array();
+  for (let i = 0; i < count; i++) {
+    console.log("Test #" + (i + 1) + " started.");
+    try {
+      await send(profile, false);
+      success++;
+      console.log("Test #" + (i + 1) + " succeded!");
+    } catch (e) {
+      fail++;
+      exceptions.push(e);
+      console.log("Test #" + (i + 1) + " failed!");
+    }
+  }
+  console.log("Tests done: " + count);
+  console.log("Tests failed: " + fail);
+  console.log("Tests succeded: " + success);
+  if (exceptions.length > 0) {
+    console.log("Saving exceptions...");
+    if (!fs.existsSync("./logs")) {
+      fs.mkdirSync("./logs");
+    }
+    let d = new Date();
+    let date = String(d.getDate());
+    let month = String(d.getMonth() + 1);
+    let year = String(d.getFullYear());
+    fs.writeFileSync(
+      "./logs/log" +
+        "_" +
+        date +
+        month +
+        year +
+        "_" +
+        d.getHours() +
+        d.getMinutes() +
+        d.getSeconds() +
+        ".txt",
+      exceptions.join("\n\n"),
+      "utf-8"
+    );
+    console.log("Exceptions saved!");
+  }
 }
