@@ -189,7 +189,13 @@ async function doDebug(count) {
       timeAfter = Date.now();
       fail++;
       exceptions.push(e);
-      console.log("Test #" + (i + 1) + " failed!");
+      console.log(
+        "Test #" +
+          (i + 1) +
+          " failed! Time taken: " +
+          (timeAfter - timeBefore) / 1000 +
+          "s"
+      );
     }
     time.push(timeAfter - timeBefore);
   }
