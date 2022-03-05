@@ -4,7 +4,7 @@ const { argv } = require("process");
 const puppeteer = require("puppeteer");
 const { isNumberObject } = require("util/types");
 
-let file = fs.readFileSync(process.argv[2] + ".json");
+let file = fs.readFileSync(process.argv[2]);
 let profile = JSON.parse(file);
 
 let url = "https://dilosi.services.gov.gr/templates/EDUPASS-SCHOOL-CARD";
