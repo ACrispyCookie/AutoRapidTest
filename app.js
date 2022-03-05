@@ -138,7 +138,7 @@ async function send(profile, log) {
 async function selectDropDown(page, button, value) {
   await page.click(button);
   await page.waitForSelector('li[data-value="' + value + '"]');
-  await page.waitForTimeout(100);
+  await page.waitForTimeout(200);
   await page.click('li[data-value="' + value + '"]');
   await page.waitForTimeout(delayBetweenActions);
 }
