@@ -148,8 +148,16 @@ if (process.argv[3]) {
   if (dashless == "s") {
     console.log("Waiting for Monday or Thursday...");
     cron.schedule("0 0 22 * * 1,4", () => {
-      send(profile, true);
-      console.log("Waiting for Monday or Thursday...");
+      let complete = false;
+      while(!complete) {
+        try {
+         send(profile, true);
+         console.log("Waiting for Monday or Thursday...");
+         complete = true;
+        } catch(e) {
+         console.log("!!! EXCEPTION THROWN RESTARTING...");
+        }
+      }
     });
   } else if (
     !isNaN(dashless) &&
