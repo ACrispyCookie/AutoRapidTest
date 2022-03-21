@@ -32,52 +32,58 @@ let loginButton5 =
 let usernameInput = "input#v";
 let passwordInput = "input#j_password";
 
-async function send(profile, log) {
+function log(msg, shouldLog){
+  let date = new Date();
+  let prefix = "[" + date.toLocaleString("en-US") + "] ";
+  if(shouldLog) console.log(prefix + msg);
+}
+
+async function send(profile, shouldLog) {
   await (async () => {
     const browser = await puppeteer.launch({ headless: headless });
     const page = await browser.newPage();
     //GOV.GR
-    if (log) console.log("Launching gov.gr...");
+    log("Launching gov.gr...", shouldLog)
     await page.goto(url, { waitUntil: "networkidle0", timeout: 0 });
     await page.click(cookieButton);
     await page.click(loginButton);
-    if (log) console.log("Navigating to account type selection...");
+    log("Navigating to account type selection...", shouldLog)
     //NAVIGATE ACCOUNT TYPE GOV.GR
     await page.waitForSelector(loginButton2);
     await page.waitForTimeout(delayBetweenActions);
     await page.click(loginButton2);
-    if (log) console.log("Navigating to login page...");
+    log("Navigating to login page...", shouldLog)
     //NAVIGATE GSIS.GR
     await page.waitForSelector(loginButton3);
     await page.waitForTimeout(delayBetweenActions);
-    if (log) console.log("Logging in...");
+    log("Logging in...", shouldLog)
     await page.type(usernameInput, profile.username);
     await page.type(passwordInput, profile.password);
     await page.click(loginButton3);
-    if (log) console.log("Navigating...");
+    log("Navigating...", shouldLog)
     //NAVIGATE GSIS.GR ALLOW DATA
     try {
       await page.waitForSelector(loginButton4, { timeout: 3000 });
       await page.click(loginButton4);
     } catch (e) {}
-    if (log) console.log("Navigating to gov.gr...");
+    log("Navigating to gov.gr...", shouldLog)
     //NAVIGATE BACK TO GOV.GR
     await page.waitForSelector(loginButton5);
     await page.waitForTimeout(delayBetweenActions);
     await page.click(loginButton5);
-    if (log) console.log("Navigating to the posting page...");
+    log("Navigating to the posting page...", shouldLog)
     //NAVIGATE TO SELF TEST POST PAGE
     await page.waitForNetworkIdle();
     await page.waitForTimeout(delayBetweenActions);
     //SET SCHOOL DATA
-    if (log) console.log("Filling school data...");
+    log("Filling school data...", shouldLog)
     for (let i = 0; i < 6; i++) {
       let keys = Object.keys(profile["buttons"]);
       let value = profile["buttons"][keys[i]];
       await selectDropDown(page, 'div[customlabel="' + keys[i] + '"]', value);
     }
     //SET STUDENT DATA
-    if (log) console.log("Filling student data...");
+    log("Filling student data...", shouldLog)
     for (let i = 0; i < 6; i++) {
       let name = Object.keys(profile)[i + 2];
       let value = profile[name];
@@ -89,7 +95,7 @@ async function send(profile, log) {
       "ΝΑΙ"
     );
     //SET DATE
-    if (log) console.log("Filling date data...");
+    log("Filling date data...", shouldLog)
     let d = new Date();
     let date = String(d.getDate());
     let month = String(d.getMonth() + 1);
@@ -98,20 +104,20 @@ async function send(profile, log) {
     await page.type("input[name=self_test_date-month]", month);
     await page.type("input[name=self_test_date-year]", year);
     //SET RESULT
-    if (log) console.log("Filling result data...");
+    log("Filling result data...", shouldLog)
     await selectDropDown(
       page,
       "div[aria-labelledby=mui-component-select-self_test_result]",
       result
     );
     //SUBMIT
-    if (log) console.log("Sumbitting data...");
+    log("Sumbitting data...", shouldLog)
     await page.click(loginButton5);
     //FINAL PAGE
     await page.waitForNetworkIdle();
     await page.waitForTimeout(delayBetweenActions);
     if (headless) {
-      if (log) console.log("Saving pdf...");
+      log("Saving pdf...", shouldLog)
       if (!fs.existsSync("./tests")) {
         fs.mkdirSync("./tests");
       }
@@ -120,16 +126,16 @@ async function send(profile, log) {
           "./tests/" +
           process.argv[2] +
           "_" +
-          date +
-          month +
-          year +
+          ("0" + date).slice(-2) +
+          ("0" + month).slice(-2) +
+          ("0" + year).slice(-2) +
           "_" +
-          d.getHours() +
-          d.getMinutes() +
-          d.getSeconds() +
+          ("0" + d.getHours()).slice(-2) +
+          ("0" + d.getMinutes()).slice(-2) +
+          ("0" + d.getSeconds()).slice(-2) +
           ".pdf",
       });
-      if (log) console.log("Process complete!");
+      log("Process complete!", shouldLog)
     }
     await browser.close();
   })();
@@ -146,16 +152,16 @@ async function selectDropDown(page, button, value) {
 if (process.argv[3]) {
   let dashless = process.argv[3].substring(1);
   if (dashless == "s") {
-    console.log("Waiting for Monday or Thursday...");
-    cron.schedule("0 0 22 * * 1,4", () => {
+    log("Waiting for Monday or Thursday...", true);
+    cron.schedule("40 9,8 23 * * 1,4", async () => {
       let complete = false;
       while(!complete) {
         try {
-         send(profile, true);
-         console.log("Waiting for Monday or Thursday...");
+         await send(profile, true);
          complete = true;
+         log("Waiting for Monday or Thursday...", true);
         } catch(e) {
-         console.log("!!! EXCEPTION THROWN RESTARTING...");
+          log("!!! EXCEPTION THROWN RESTARTING...", true);
         }
       }
     });
@@ -181,43 +187,46 @@ async function doDebug(count) {
   for (let i = 0; i < count; i++) {
     let timeBefore = Date.now();
     let timeAfter = 0;
-    console.log("Test #" + (i + 1) + " started.");
+    log("Test #" + (i + 1) + " started.", true);
     try {
       await send(profile, false);
       timeAfter = Date.now();
       success++;
-      console.log(
+      log(
         "Test #" +
           (i + 1) +
           " succeded! Time taken: " +
           (timeAfter - timeBefore) / 1000 +
-          "s"
+          "s",
+          true
       );
     } catch (e) {
       timeAfter = Date.now();
       fail++;
       exceptions.push(e);
-      console.log(
+      log(
         "Test #" +
           (i + 1) +
           " failed! Time taken: " +
           (timeAfter - timeBefore) / 1000 +
-          "s"
+          "s",
+          true
       );
     }
     time.push(timeAfter - timeBefore);
   }
-  console.log(
+  log(
     "Tests done: " +
       count +
       " (Avg. time: " +
       time.reduce((a, b) => a + b, 0) / 1000 / time.length +
-      "s)"
+      "s)",
+      true
   );
-  console.log("Tests failed: " + fail);
-  console.log("Tests succeded: " + success);
+  log("Tests failed: " + fail, true);
+  log("Tests succeded: " + success, true);
   if (exceptions.length > 0) {
-    console.log("Saving exceptions...");
+    log("Saving exceptions...", true);
     if (!fs.existsSync("./logs")) {
       fs.mkdirSync("./logs");
     }
@@ -239,6 +248,6 @@ async function doDebug(count) {
       exceptions.join("\n\n"),
       "utf-8"
     );
-    console.log("Exceptions saved!");
+    log("Exceptions saved!", true);
   }
 }
