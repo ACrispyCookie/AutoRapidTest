@@ -153,13 +153,13 @@ if (process.argv[3]) {
   let dashless = process.argv[3].substring(1);
   if (dashless == "s") {
     log("Waiting for Monday or Thursday...", true);
-    cron.schedule("40 9,8 23 * * 1,4", async () => {
+    cron.schedule("0 0 22 * * 1,4", async () => {
       let complete = false;
       while(!complete) {
         try {
-         await send(profile, true);
-         complete = true;
-         log("Waiting for Monday or Thursday...", true);
+          await send(profile, true);
+          complete = true;
+          log("Waiting for Monday or Thursday...", true);
         } catch(e) {
           log("!!! EXCEPTION THROWN RESTARTING...", true);
         }
