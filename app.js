@@ -1,8 +1,20 @@
 const fs = require("fs");
+const nodemailer = require('nodemailer');
 const cron = require("node-cron");
 const { argv } = require("process");
 const puppeteer = require("puppeteer");
 const { isNumberObject } = require("util/types");
+
+let transporter = nodemailer.createTransport({
+  host: "mail.colonymc.org",
+  port: 465,
+  secure: true,
+  auth: {
+    user: "",
+    pass: ""
+  }
+});
+let emailHtml = fs.readFileSync("./email.html");
 
 let file = fs.readFileSync(process.argv[2]);
 let profile = JSON.parse(file);
@@ -149,34 +161,14 @@ async function selectDropDown(page, button, value) {
   await page.waitForTimeout(delayBetweenActions);
 }
 
-if (process.argv[3]) {
-  let dashless = process.argv[3].substring(1);
-  if (dashless == "s") {
-    log("Waiting for Monday or Thursday...", true);
-    cron.schedule("0 0 22 * * 1,4", async () => {
-      let complete = false;
-      while(!complete) {
-        try {
-          await send(profile, true);
-          complete = true;
-          log("Waiting for Monday or Thursday...", true);
-        } catch(e) {
-          log("!!! EXCEPTION THROWN RESTARTING...", true);
-        }
-      }
-    });
-  } else if (
-    !isNaN(dashless) &&
-    Number.isInteger(Number(dashless)) &&
-    Number(dashless) > 1
-  ) {
-    let count = Number(dashless);
-    doDebug(count);
-  } else {
-    send(profile, true);
-  }
-} else {
-  send(profile, true);
+async function sendMail(date, pdf, scheduled) {
+  let info = transporter.sendMail({
+    from: '"AutoRapidTest" <autotest@colonymc.org>',
+    to: profile["email"],
+    subject: "Self test submitted! ✅",
+    html: emailHtml
+  });
+  return info;
 }
 
 async function doDebug(count) {
@@ -251,3 +243,37 @@ async function doDebug(count) {
     log("Exceptions saved!", true);
   }
 }
+
+async function main(){
+  if (process.argv[3]) {
+    let dashless = process.argv[3].substring(1);
+    if (dashless == "s") {
+      log("Waiting for Monday or Thursday...", true);
+      cron.schedule("0 0 22 * * 1,4", async () => {
+        let complete = false;
+        while(!complete) {
+          try {
+            await send(profile, true);
+            complete = true;
+            log("Waiting for Monday or Thursday...", true);
+          } catch(e) {
+            log("!!! EXCEPTION THROWN RESTARTING...", true);
+          }
+        }
+      });
+    } else if (
+      !isNaN(dashless) &&
+      Number.isInteger(Number(dashless)) &&
+      Number(dashless) > 1
+    ) {
+      let count = Number(dashless);
+      await doDebug(count);
+    } else {
+      await send(profile, true);
+    }
+  } else {
+    await send(profile, true);
+  }
+}
+
+main();
