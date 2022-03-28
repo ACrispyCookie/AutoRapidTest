@@ -1,0 +1,75 @@
+class Mailer {
+    constructor(file, profile, startDate, endDate, scheduled) {
+        const nodemailer = require('nodemailer');
+        const pug = require('pug');
+        this.fs = require('fs');
+        this.email = pug.compileFile("./resources/email.pug");
+        this.transporter = nodemailer.createTransport({
+          host: "mail.example.com",
+          port: 465,
+          secure: true,
+          auth: {
+            user: "autotest@example.com",
+            pass: "passwd"
+          },
+          tls: {
+            rejectUnauthorized: false
+          }
+        });
+        this.profile = profile;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.scheduled = scheduled;
+        this.file = file;
+      
+    }
+
+    async sendMail() {
+      let info = await this.transporter.sendMail({
+        from: '"AutoRapidTest" <autotest@colonymc.org>',
+        to: this.profile["email"],
+        subject: this.getSubject(),
+        html: this.getHTML(),
+        attachments: [
+          /*{
+            filename: "first_page.jpeg",
+            path: "",
+            cid: "first_page"
+          },*/
+          {
+            path: "./tests/" + this.file.name + ".pdf",
+          }
+        ]
+      });
+      return info;
+    }
+
+    getSubject(){
+      let s = (this.scheduled ? "Scheduled" : "One-time") + " self test " + (this.file ? "submitted! ✅" : "not submitted! ❌");
+      return s;
+    }
+
+    getHTML(){
+      let html = this.email({
+        name: this.profile["name"],
+        startDate: this.startDate,
+        endDate: this.endDate,
+        result: (this.file ? "has been successfully submitted! You can view it below." : "wasn't successfully submit due to an error. Please take a look at the console logs.")
+      });
+      return html;
+    }
+
+    async getImage(){
+      const pdf = require('pdf-poppler');
+      let opts = {
+        format: 'jpeg',
+        out_dir: "./imgs",
+        out_prefix: this.file.name,
+        page: null
+      }
+      await pdf.convert("./tests/" + this.file.name + ".pdf", opts);
+    }
+
+}
+
+module.exports = Mailer;
