@@ -1,5 +1,6 @@
 /node_modules
 /tests
 /logs
-jason.json
-faidra.json
+/resources/jason.json
+/resources/faidra.json
+/resources/email.json

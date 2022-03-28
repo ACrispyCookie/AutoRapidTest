@@ -3,14 +3,15 @@ class Mailer {
         const nodemailer = require('nodemailer');
         const pug = require('pug');
         this.fs = require('fs');
+        let credentials = JSON.parse(this.fs.readFileSync("./resources/email.json"));
         this.email = pug.compileFile("./resources/email.pug");
         this.transporter = nodemailer.createTransport({
-          host: "mail.example.com",
+          host: credentials.host,
           port: 465,
           secure: true,
           auth: {
-            user: "autotest@example.com",
-            pass: "passwd"
+            user: credentials.username,
+            pass: credentials.password
           },
           tls: {
             rejectUnauthorized: false
