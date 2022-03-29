@@ -34,7 +34,7 @@ class Mailer {
         attachments: [
           {
             filename: "first_page.jpg",
-            path: "./imgs/" + this.fileName + "-0.png",
+            path: "./imgs/" + this.fileName + "-1.png",
             cid: "first_page"
           },
           {
