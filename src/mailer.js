@@ -22,26 +22,27 @@ class Mailer {
         this.endDate = endDate;
         this.scheduled = scheduled;
         this.file = file;
-      
     }
 
     async sendMail() {
+      await this.generateImage();
       let info = await this.transporter.sendMail({
         from: '"AutoRapidTest" <autotest@colonymc.org>',
         to: this.profile["email"],
         subject: this.getSubject(),
         html: this.getHTML(),
         attachments: [
-          /*{
-            filename: "first_page.jpeg",
-            path: "",
+          {
+            filename: "first_page.jpg",
+            path: "./imgs/" + this.file.name + "-1.jpg",
             cid: "first_page"
-          },*/
+          },
           {
             path: "./tests/" + this.file.name + ".pdf",
           }
         ]
       });
+      this.fs.rmdir("./imgs/", () => {});
       return info;
     }
 
@@ -60,11 +61,14 @@ class Mailer {
       return html;
     }
 
-    async getImage(){
+    async generateImage(){
       const pdf = require('pdf-poppler');
+      if(!this.fs.existsSync('./imgs/')){
+        this.fs.mkdirSync("./imgs/");
+      }
       let opts = {
         format: 'jpeg',
-        out_dir: "./imgs",
+        out_dir: "./imgs/",
         out_prefix: this.file.name,
         page: null
       }

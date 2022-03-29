@@ -5,7 +5,7 @@ const Test = require("./src/test.js");
 async function main(){
   //GET PROFILE
   let profileArg = argv[2];
-  let file = fs.readFileSync("./resources/" + profileArg);
+  let file = fs.readFileSync(profileArg);
   let profile = JSON.parse(file);
 
   //GET TEST TYPE
