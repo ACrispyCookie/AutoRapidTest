@@ -122,24 +122,20 @@ class Submitter {
         //FINAL PAGE
         await page.waitForNetworkIdle();
         await page.waitForTimeout(this.delayBetweenActions);
-        let file = null;
+        let name = null;
         if (this.headless) {
             this.log("Saving pdf...")
             if (!this.fs.existsSync("./tests")) {
                 this.fs.mkdirSync("./tests");
             }
-            let name =  this.profile.name.toLowerCase() + "_" 
+            name = this.profile.name.toLowerCase() + "_" 
             + ("0" + date).slice(-2) 
             + ("0" + month).slice(-2) 
             + ("0" + year).slice(-2) + "_" 
             + ("0" + d.getHours()).slice(-2) 
             + ("0" + d.getMinutes()).slice(-2)
-            + ("0" + d.getSeconds()).slice(-2)
-            let pdf = await page.pdf({path: "./tests/" + name + ".pdf"});
-            file = {
-                name: name,
-                pdf: pdf
-            }
+            + ("0" + d.getSeconds()).slice(-2);
+            await page.pdf({path: "./tests/" + name + ".pdf"});
         }
         await browser.close();
         return file;

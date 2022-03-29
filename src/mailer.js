@@ -1,5 +1,5 @@
 class Mailer {
-    constructor(file, profile, startDate, endDate, scheduled) {
+    constructor(fileName, profile, startDate, endDate, scheduled) {
         const nodemailer = require('nodemailer');
         const pug = require('pug');
         this.fs = require('fs');
@@ -21,11 +21,11 @@ class Mailer {
         this.startDate = startDate;
         this.endDate = endDate;
         this.scheduled = scheduled;
-        this.file = file;
+        this.fileName = fileName;
     }
 
     async sendMail() {
-      await this.generateImage();
+      this.generateImage();
       let info = await this.transporter.sendMail({
         from: '"AutoRapidTest" <autotest@colonymc.org>',
         to: this.profile["email"],
@@ -34,20 +34,20 @@ class Mailer {
         attachments: [
           {
             filename: "first_page.jpg",
-            path: "./imgs/" + this.file.name + "-1.jpg",
+            path: "./imgs/" + this.fileName + "-0.png",
             cid: "first_page"
           },
           {
-            path: "./tests/" + this.file.name + ".pdf",
+            path: "./tests/" + this.fileName + ".pdf",
           }
         ]
       });
-      this.fs.rmdir("./imgs/", () => {});
+      this.fs.rmdir("./imgs/", { recursive: true, force: true });
       return info;
     }
 
     getSubject(){
-      let s = (this.scheduled ? "Scheduled" : "One-time") + " self test " + (this.file ? "submitted! ✅" : "not submitted! ❌");
+      let s = (this.scheduled ? "Scheduled" : "One-time") + " self test " + (this.fileName ? "submitted! ✅" : "not submitted! ❌");
       return s;
     }
 
@@ -56,23 +56,15 @@ class Mailer {
         name: this.profile["name"],
         startDate: this.startDate,
         endDate: this.endDate,
-        result: (this.file ? "has been successfully submitted! You can view it below." : "wasn't successfully submit due to an error. Please take a look at the console logs.")
+        result: (this.fileName ? "has been successfully submitted! You can view it below." : "wasn't successfully submit due to an error. Please take a look at the console logs.")
       });
       return html;
     }
 
-    async generateImage(){
-      const pdf = require('pdf-poppler');
-      if(!this.fs.existsSync('./imgs/')){
-        this.fs.mkdirSync("./imgs/");
-      }
-      let opts = {
-        format: 'jpeg',
-        out_dir: "./imgs/",
-        out_prefix: this.file.name,
-        page: null
-      }
-      await pdf.convert("./tests/" + this.file.name + ".pdf", opts);
+    generateImage(){
+      const pdf2image = require('./pdf2image.js');
+      this.fs.mkdirSync("./imgs/");
+      pdf2image("./tests/" + this.fileName + ".pdf", { out_dir: "./imgs/", out_prefix: this.fileName});
     }
 
 }

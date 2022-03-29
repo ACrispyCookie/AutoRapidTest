@@ -43,12 +43,12 @@ class Test {
   async executeOne(){
     let submitter = new this.submitter(this.profile, this.result, this.headless, true);
     let startDate = new Date().toLocaleString("en-US");
-    let file = await submitter.submitOne();
+    let fileName = await submitter.submitOne();
     let endDate = new Date().toLocaleString("en-US");
-    this.log("Sending a " + (file ? "success" : "failure") + " email...");
-    let mailer = new this.mailer(file, this.profile, startDate, endDate, false);
+    this.log("Sending a " + (fileName ? "success" : "failure") + " email...");
+    let mailer = new this.mailer(fileName, this.profile, startDate, endDate, false);
     await mailer.sendMail();
-    this.log("Process " + (file ? "complete" : "failed") + "!");
+    this.log("Process " + (fileName ? "complete" : "failed") + "!");
   }
 
   log(msg) {
