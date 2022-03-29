@@ -63,7 +63,9 @@ class Mailer {
 
     generateImage(){
       const pdf2image = require('./pdf2image.js');
-      this.fs.mkdirSync("./imgs/");
+      if(!this.fs.existsSync("./imgs/")){
+        this.fs.mkdirSync("./imgs/");
+      }
       pdf2image("./tests/" + this.fileName + ".pdf", { out_dir: "./imgs/", out_prefix: this.fileName});
     }
 
