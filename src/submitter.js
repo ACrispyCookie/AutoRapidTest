@@ -28,9 +28,9 @@ class Submitter {
         let tries = 0;
         while(!completed && tries != 3){
             try {
-                let file = await this.submitOneUnsafe();
+                let fileName = await this.submitOneUnsafe();
                 completed = true;
-                return file;
+                return fileName;
             }
             catch(e){
                 tries++;
@@ -138,7 +138,7 @@ class Submitter {
             await page.pdf({path: "./tests/" + name + ".pdf"});
         }
         await browser.close();
-        return file;
+        return name;
     }
     
     async selectDropDown(page, button, value) {
