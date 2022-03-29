@@ -1,5 +1,6 @@
 class Debugger {
     constructor(submitter, num) {
+        this.fs = require('fs');
         this.submitter = submitter
         this.num = num;
         this.fail = 0;
@@ -36,11 +37,11 @@ class Debugger {
 
     async saveExceptions(){
         this.log("Saving exceptions...");
-        if (!fs.existsSync("./logs")) {
-            fs.mkdirSync("./logs");
+        if (!this.fs.existsSync("./logs")) {
+            this.fs.mkdirSync("./logs");
         }
         let d = new Date();
-        await fs.writeFileSync( "./logs/log_" + d.getDate() + (d.getMonth() + 1) + d.getFullYear() + "_" + d.getHours() + d.getMinutes() + d.getSeconds() + ".txt", exceptions.join("\n\n"), "utf-8");
+        await this.fs.writeFileSync( "./logs/log_" + d.getDate() + (d.getMonth() + 1) + d.getFullYear() + "_" + d.getHours() + d.getMinutes() + d.getSeconds() + ".txt", this.exceptions.join("\n\n"), "utf-8");
         this.log("Exceptions saved!");
     }
 
