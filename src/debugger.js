@@ -26,9 +26,9 @@ class Debugger {
             }
             this.durations.push(end - start);
         }
-        this.log("Tests done: " + results.count + " (Avg. time: " + results.durations.reduce((a, b) => a + b, 0) / 1000 / results.durations.length + "s)");
-        this.log("Tests failed: " + results.fail);
-        this.log("Tests succeded: " + results.success);
+        this.log("Tests done: " + this.num + " (Avg. time: " + this.durations.reduce((a, b) => a + b, 0) / 1000 / this.durations.length + "s)");
+        this.log("Tests failed: " + this.fail);
+        this.log("Tests succeded: " + this.success);
         if(this.exceptions.length > 0){
             await this.saveExceptions()
         }
