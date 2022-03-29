@@ -42,7 +42,7 @@ class Mailer {
           }
         ]
       });
-      this.fs.rmdir("./imgs/", { recursive: true, force: true }, () => {});
+      this.fs.rm("./imgs/", { recursive: true, force: true }, () => {});
       return info;
     }
 
