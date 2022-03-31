@@ -34,7 +34,7 @@ class Mailer {
         attachments: [
           {
             filename: "first_page.jpg",
-            path: "./imgs/" + this.fileName + "-1.jpg",
+            path: "./tests/" + this.fileName + "-1.jpg",
             cid: "first_page"
           },
           {
@@ -42,7 +42,7 @@ class Mailer {
           }
         ]
       });
-      this.fs.rm("./imgs/", { recursive: true, force: true }, () => {});
+      this.fs.rm("./tests/" + this.fileName + "-1.jpg", { recursive: true, force: true }, () => {});
       return info;
     }
 
@@ -63,10 +63,7 @@ class Mailer {
 
     generateImage(){
       const pdf2image = require('./pdf2image.js');
-      if(!this.fs.existsSync("./imgs/")){
-        this.fs.mkdirSync("./imgs/");
-      }
-      pdf2image("./tests/" + this.fileName + ".pdf", { out_dir: "./imgs/", out_prefix: this.fileName});
+      pdf2image("./tests/" + this.fileName + ".pdf", { out_dir: "./tests/", out_prefix: this.fileName});
     }
 
 }

@@ -1,6 +1,6 @@
 const path = require('path');
 const {execFile} = require('child_process');
-const pdftocairoBin = '/usr/bin/pdftocairo';
+const pdftocairoBin = (process.platform == "win32" ? "C:\\Program Files (x86)\\poppler-0.68.0\\bin" : '/usr/bin/pdftocairo');
 const FORMATS = ['png', 'jpeg', 'tiff', 'pdf', 'ps', 'eps', 'svg'];
 
 let defaultOptions = {
