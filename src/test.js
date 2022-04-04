@@ -29,7 +29,7 @@ class Test {
   async schedule() {
     this.log("Waiting for Monday or Thursday...");
     this.scheduler.schedule("0 30 23 * * 1,4", async () => {
-      this.executeOne();
+      await this.executeOne();
       this.log("Waiting for Monday or Thursday...");
     });
   }
