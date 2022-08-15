@@ -21,7 +21,7 @@ async function main(){
   //GET PROFILE
   let file = fs.readFileSync("./config/profiles/" + profileName + ".json");
   let profile = JSON.parse(file);
-  profile.name = profileName;
+  profile.name = String(profileName);
 
   //GET DESIRED RESULT
   let result = resultName == "n" ? "ΑΡΝΗΤΙΚΟ" : resultName == "p" ? "ΘΕΤΙΚΟ" : "ΑΡΝΗΤΙΚΟ"
