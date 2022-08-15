@@ -33,6 +33,7 @@ class Debugger {
         if(this.exceptions.length > 0){
             await this.saveExceptions()
         }
+        process.exit(0);
     }
 
     async saveExceptions(){
