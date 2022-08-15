@@ -61,6 +61,7 @@ class Test {
       await mailer.sendMail();
     }
     this.log("Process " + (fileName ? "complete" : "failed") + "!");
+    process.exit(0);
   }
 
   log(msg) {
