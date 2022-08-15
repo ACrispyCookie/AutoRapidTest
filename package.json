@@ -2,9 +2,10 @@
   "name": "autoselftest",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "main": "node ./src/main.js"
   },
   "author": "ACrispyCookie",
   "license": "ISC",
@@ -12,6 +13,7 @@
     "node-cron": "^3.0.0",
     "nodemailer": "^6.7.3",
     "pug": "^3.0.2",
-    "puppeteer": "^13.4.0"
+    "puppeteer": "^13.4.0",
+    "yargs": "^17.5.1"
   }
 }

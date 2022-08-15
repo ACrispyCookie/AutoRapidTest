@@ -1,0 +1,5 @@
+{
+    "default": {
+        "cron": "0 30 20 * * SUN,WED"
+    }
+}

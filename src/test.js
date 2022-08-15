@@ -1,36 +1,45 @@
+const rl = require("readline").createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
 class Test {
     
-  constructor(profile, type, result){
+  constructor(profile, type, scheduleObj, result, forcePositive){
     this.submitter = require('./submitter.js');
     this.debugger = require('./debugger.js');
     this.scheduler = require('node-cron');
     this.mailer = require('./mailer.js');
     this.profile = profile;
     this.type = type;
+    this.scheduleObj = scheduleObj;
+    this.forcePositive = forcePositive;
     this.result = result;
     this.headless = true;
   }
 
   async execute() {
-    if(this.type == "one"){
-      this.log("Executing an one time test...");
-      await this.executeOne();
-    }
-    else if(this.type == "schedule"){
-      this.log("Executing a scheduled test...");
-      this.schedule();
-    }
-    else {
-      this.log("Executing the debugger...");
-      this.debug();
-    }
+    this.checkForPositive(async () => {
+      if(this.type == "one"){
+        this.log("Executing an one time test...");
+        await this.executeOne();
+      }
+      else if(this.type == "schedule"){
+        this.log("Executing a scheduled test...");
+        this.schedule();
+      }
+      else {
+        this.log("Executing the debugger...");
+        this.debug();
+      }
+    });
   }
 
   async schedule() {
-    this.log("Waiting for Monday or Thursday...");
-    this.scheduler.schedule("0 30 20 * * 1", async () => {
+    this.log("Waiting...");
+    this.scheduler.schedule(this.scheduleObj['cron'], async () => {
       await this.executeOne();
-      this.log("Waiting for Monday or Thursday...");
+      this.log("Waiting...");
     });
   }
 
@@ -55,6 +64,26 @@ class Test {
     let date = new Date();
     let prefix = "[" + date.toLocaleString("en-US") + "] ";
     console.log(prefix + msg);
+  }
+
+  checkForPositive(callback){
+    if(!this.forcePositive && this.result == "ΘΕΤΙΚΟ"){
+      this.log("*** WARNING! You have requested a positive test! Do you want to continue? (y/n)*** ")
+      rl.question("", (line) => {
+        if(line.toLocaleLowerCase() == "n"){
+          process.exit(1);
+        }
+        else if(line.toLocaleLowerCase() == "y"){
+          callback();
+        }
+        else{
+          this.checkForPositive(callback);
+        }
+      });
+    }
+    else{
+      callback();
+    }
   }
 }
 
