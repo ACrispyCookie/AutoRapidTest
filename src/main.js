@@ -7,6 +7,7 @@ var argv = require('yargs/yargs')(process.argv.slice(2))
           .default('d', null)
           .default('r', "n")
           .count('f')
+          .count('e')
           .argv;
 
 async function main(){
@@ -15,10 +16,12 @@ async function main(){
   let debugName = argv.d;
   let resultName = argv.r;
   let force = argv.f >= 1;
+  let email = argv.e >= 1;
 
   //GET PROFILE
   let file = fs.readFileSync("./config/profiles/" + profileName + ".json");
   let profile = JSON.parse(file);
+  profile.name = profileName;
 
   //GET DESIRED RESULT
   let result = resultName == "n" ? "ΑΡΝΗΤΙΚΟ" : resultName == "p" ? "ΘΕΤΙΚΟ" : "ΑΡΝΗΤΙΚΟ"
@@ -40,7 +43,7 @@ async function main(){
     type = "one";
   }
 
-  let test = new Test(profile, type, schedule, result, force);
+  let test = new Test(profile, type, schedule, result, force, email);
   await test.execute();
 }
 

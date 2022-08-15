@@ -5,7 +5,7 @@ const rl = require("readline").createInterface({
 
 class Test {
     
-  constructor(profile, type, scheduleObj, result, forcePositive){
+  constructor(profile, type, scheduleObj, result, forcePositive, shouldEmail){
     this.submitter = require('./submitter.js');
     this.debugger = require('./debugger.js');
     this.scheduler = require('node-cron');
@@ -14,6 +14,7 @@ class Test {
     this.type = type;
     this.scheduleObj = scheduleObj;
     this.forcePositive = forcePositive;
+    this.shouldEmail = forcePositive;
     this.result = result;
     this.headless = true;
   }
@@ -54,10 +55,12 @@ class Test {
     let startDate = new Date().toLocaleString("en-US");
     let fileName = await submitter.submitOne();
     let endDate = new Date().toLocaleString("en-US");
-    this.log("Sending a " + (fileName ? "success" : "failure") + " email...");
-    let mailer = new this.mailer(fileName, this.profile, startDate, endDate, false);
-    await mailer.sendMail();
-    this.log("Process " + (fileName ? "complete" : "failed") + "!");
+    if(this.shouldEmail){
+      this.log("Sending a " + (fileName ? "success" : "failure") + " email...");
+      let mailer = new this.mailer(fileName, this.profile, startDate, endDate, false);
+      await mailer.sendMail();
+      this.log("Process " + (fileName ? "complete" : "failed") + "!");
+    }
   }
 
   log(msg) {
