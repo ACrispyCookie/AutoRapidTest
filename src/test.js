@@ -14,7 +14,7 @@ class Test {
     this.type = type;
     this.scheduleObj = scheduleObj;
     this.forcePositive = forcePositive;
-    this.shouldEmail = forcePositive;
+    this.shouldEmail = shouldEmail;
     this.result = result;
     this.headless = true;
   }
