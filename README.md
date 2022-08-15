@@ -87,3 +87,34 @@ Options:
   -f                     Force a positive test without a warning.
   -e                     Send an email on completion.
 ```
+After the script is completed the a copy of your form will be saved in the `tests` folder.
+
+## How to fill the `buttons` object on a profile
+First open up a new form for a self-test. On this page there are some buttons for your school info. Example:
+
+![image](https://user-images.githubusercontent.com/30019341/184705242-1b20a5b5-1079-4cdd-9f68-a8e26e9e5548.png)
+
+Click each button and put the name of your option in the correct element.
+
+For the last element `Σχολείο` you will need to open up developer tools on your browser while you have clicked the last button and hover over your option. You will need to put the `data-value` attribute of your option inside the element. Example:
+
+![image](https://user-images.githubusercontent.com/30019341/184706708-c12f5a2b-d84f-41eb-b29e-84fe0c320912.png)
+
+
+An example of a valid `buttons` object:
+```javascript
+{
+  .
+  .
+    "buttons": { 
+      "Περιφέρεια": "ΑΝ. ΜΑΚΕΔΟΝΙΑΣ ΚΑΙ ΘΡΑΚΗΣ", 
+      "Περιφερειακή Ενότητα": "ΔΡΑΜΑΣ",
+      "Δήμος": "ΔΟΞΑΤΟΥ",
+      "Κατηγορία": "Γυμνάσια",
+      "Τύπος": "Ημερήσιο Γυμνάσιο",
+      "Σχολείο": "ΣΧΟΛΕΙΟ/0901060"
+    }
+  .
+  .
+}
+```

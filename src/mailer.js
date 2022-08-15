@@ -25,24 +25,24 @@ class Mailer {
     }
 
     async sendMail() {
-      this.generateImage();
+      //this.generateImage();
       let info = await this.transporter.sendMail({
         from: '"AutoRapidTest" <autotest@colonymc.org>',
         to: this.profile["email"],
         subject: this.getSubject(),
         html: this.getHTML(),
         attachments: [
-          {
+          /*{
             filename: "first_page.jpg",
             path: "./tests/" + this.fileName + "-1.jpg",
             cid: "first_page"
-          },
+          },*/
           {
             path: "./tests/" + this.fileName + ".pdf",
           }
         ]
       });
-      this.fs.rm("./tests/" + this.fileName + "-1.jpg", { recursive: true, force: true }, () => {});
+      //this.fs.rm("./tests/" + this.fileName + "-1.jpg", { recursive: true, force: true }, () => {});
       return info;
     }
 
@@ -61,10 +61,10 @@ class Mailer {
       return html;
     }
 
-    generateImage(){
+    /*generateImage(){
       const pdf2image = require('./pdf2image.js');
       pdf2image("./tests/" + this.fileName + ".pdf", { out_dir: "./tests/", out_prefix: this.fileName});
-    }
+    }*/
 
 }
 

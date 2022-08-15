@@ -3,19 +3,19 @@
   "username": "defaultUser",
   "password": "defaultPassword",
   "test": {
-    "firstname": "First",
-    "lastname": "Last",
-    "dob-day": "1",
-    "dob-month": "1",
-    "dob-year": "1970",
-    "amka": "12345678901",
-    "buttons": {
-      "Περιφέρεια": "ΚΕΝΤΡΙΚΗΣ ΜΑΚΕΔΟΝΙΑΣ",
-      "Περιφερειακή Ενότητα": "ΠΙΕΡΙΑΣ",
-      "Δήμος": "ΔΙΟΥ-ΟΛΥΜΠΟΥ",
-      "Κατηγορία": "Λύκεια",
+    "firstname": "First", 
+    "lastname": "Last", 
+    "dob-day": "1", 
+    "dob-month": "1", 
+    "dob-year": "1970", 
+    "amka": "12345678901", 
+    "buttons": { 
+      "Περιφέρεια": "region", 
+      "Περιφερειακή Ενότητα": "location",
+      "Δήμος": "municipality",
+      "Κατηγορία": "lyceum",
       "Τύπος": "Ημερήσιο Γενικό Λύκειο",
-      "Σχολείο": "ΣΧΟΛΕΙΟ/3953010"
+      "Σχολείο": "ΣΧΟΛΕΙΟ/0123456"
     }
   }
 }

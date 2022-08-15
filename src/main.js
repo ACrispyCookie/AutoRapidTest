@@ -1,7 +1,7 @@
 const fs = require("fs");
 const Test = require("./test.js");
 var argv = require('yargs/yargs')(process.argv.slice(2))
-          .usage("Usage: npm run main -- <profile> -s [schedule] -d [times to run the debugger] -r [result: n (negative) or p (positive)]")
+          .usage("Usage: npm run main -- <profile> -e -f -s [schedule] -d [times to run the debugger] -r [result: n (negative) or p (positive)]")
           .demandCommand(1)
           .default('s', null)
           .default('d', null)
