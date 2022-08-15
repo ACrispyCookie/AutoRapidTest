@@ -59,8 +59,8 @@ class Test {
       this.log("Sending a " + (fileName ? "success" : "failure") + " email...");
       let mailer = new this.mailer(fileName, this.profile, startDate, endDate, false);
       await mailer.sendMail();
-      this.log("Process " + (fileName ? "complete" : "failed") + "!");
     }
+    this.log("Process " + (fileName ? "complete" : "failed") + "!");
   }
 
   log(msg) {
